@@ -9,7 +9,47 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>JB STORE (POS)</title>
 </head>
-<body>
+<body class="h-screen overflow-hidden flex flex-col">
 
+    <!-- Header -->
+    <header class="glass-panel px-16 py-3 flex justify-between items-center z-10">
+        <div class="flex items-center gap-3">
+            <div class="bg-blue-600 p-2 rounded-lg">
+                <i class="fas fa-cash-register text-white text-xl"></i>
+            </div>
+            <h1 class="text-xl font-bold tracking-tight">JB STORE (POS)</h1>
+        </div>
+        <div class="flex gap-2 overflow-x-auto no-scrollbar">
+            <button onclick="switchTab('pos')" id="tab-pos" class="tab-btn active-tab px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap">POS</button>
+            <button onclick="switchTab('inventory')" id="tab-inventory" class="tab-btn px-4 py-2 rounded-lg font-medium hover:bg-slate-700 transition-all whitespace-nowrap">Inventory</button>
+            <button onclick="switchTab('debt')" id="tab-debt" class="tab-btn px-4 py-2 rounded-lg font-medium hover:bg-slate-700 transition-all whitespace-nowrap">Debt</button>
+            <button onclick="switchTab('sales')" id="tab-sales" class="tab-btn px-4 py-2 rounded-lg font-medium hover:bg-slate-700 transition-all whitespace-nowrap">Sales</button>
+        </div>
+    </header>
+
+    <main class="flex-1 overflow-hidden p-6 relative">
+        
+        <!-- POS CONTENT -->
+        <section id="section-pos" class="h-full grid grid-cols-12 gap-6">
+            <div class="col-span-8 flex flex-col gap-4 h-full">
+                <div class="flex gap-4 items-center">
+                    <div class="relative flex-1">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="search-pos" oninput="renderPosProducts()" placeholder="Seacrh products..." class="w-full bg-slate-800 border border-slate-700 rounded-xl py-2 pl-10 pr-4 focus:ring-blue-500 outline-none">
+                    </div>
+                </div>
+                <div id="pos-product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto custom-scrollbar pr-2 pb-4"></div>
+            </div>
+            
+            <div class="col-span-4 glass-panel rounded-2xl p-5 flex flex-col h-full shadow-2xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold flex items-center gap-4">
+                        <i class="fas fa-shopping-cart text-blue-500"></i> Current Order
+                    </h2>
+                    <button onclick="clearCart()" class="text-xs text-slate-400 hover:text-rose-400 transition-all">Clear All</button>
+                </div>
+            </div>
+        </section>
+    </main>
 </body>
 </html>

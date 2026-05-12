@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #cbe7eb;
+    color: #f1f5f9;
+}
+
+.glass-panel {
+    background: rgba(14, 16, 85, 0.7);
+    backdrop-filter: blur(2px);
+    border-radius: 1px solid rgba(60, 236, 248, 0.1);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 10px;
+}
+
+.active-tab {
+    background: #1e293b;
+    color: #f1f5f9;
+}
