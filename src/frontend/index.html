@@ -7,49 +7,201 @@
     <link href="../../src/frontend/styles/output.css" rel="stylesheet">
     <link href="../../src/frontend/styles/style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <title>JB STORE (POS)</title>
+    <title>J&LB STORE (POS)</title>
 </head>
 <body class="h-screen overflow-hidden flex flex-col">
 
     <!-- Header -->
-    <header class="glass-panel px-16 py-3 flex justify-between items-center z-10">
+    <header class="glass-panel px-6 py-4 flex justify-between items-center z-10">
         <div class="flex items-center gap-3">
             <div class="bg-blue-600 p-2 rounded-lg">
                 <i class="fas fa-cash-register text-white text-xl"></i>
             </div>
-            <h1 class="text-xl font-bold tracking-tight">JB STORE (POS)</h1>
+            <h1 class="text-xl font-bold tracking-tight">J&LB STORE</h1>
         </div>
         <div class="flex gap-2 overflow-x-auto no-scrollbar">
             <button onclick="switchTab('pos')" id="tab-pos" class="tab-btn active-tab px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap">POS</button>
             <button onclick="switchTab('inventory')" id="tab-inventory" class="tab-btn px-4 py-2 rounded-lg font-medium hover:bg-slate-700 transition-all whitespace-nowrap">Inventory</button>
-            <button onclick="switchTab('debt')" id="tab-debt" class="tab-btn px-4 py-2 rounded-lg font-medium hover:bg-slate-700 transition-all whitespace-nowrap">Debt</button>
-            <button onclick="switchTab('sales')" id="tab-sales" class="tab-btn px-4 py-2 rounded-lg font-medium hover:bg-slate-700 transition-all whitespace-nowrap">Sales</button>
+            <button onclick="switchTab('debt')" id="tab-debt" class="tab-btn px-4 py-2 rounded-lg font-medium hover:bg-slate-700 transition-all whitespace-nowrap">Debt Tracker</button>
+            <button onclick="switchTab('sales')" id="tab-sales" class="tab-btn px-4 py-2 rounded-lg font-medium hover:bg-slate-700 transition-all whitespace-nowrap">Sales Report</button>
         </div>
     </header>
 
     <main class="flex-1 overflow-hidden p-6 relative">
         
-        <!-- POS CONTENT -->
+        <!-- POS SECTION -->
         <section id="section-pos" class="h-full grid grid-cols-12 gap-6">
             <div class="col-span-8 flex flex-col gap-4 h-full">
                 <div class="flex gap-4 items-center">
                     <div class="relative flex-1">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="text" id="search-pos" oninput="renderPosProducts()" placeholder="Seacrh products..." class="w-full bg-slate-800 border border-slate-700 rounded-xl py-2 pl-10 pr-4 focus:ring-blue-500 outline-none">
+                        <input type="text" id="search-pos" oninput="renderPosProducts()" placeholder="Search products..." class="w-full bg-slate-800 border border-slate-700 rounded-xl py-2 pl-10 pr-4 focus:ring-2 focus:ring-blue-500 outline-none">
                     </div>
                 </div>
                 <div id="pos-product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto custom-scrollbar pr-2 pb-4"></div>
             </div>
-            
+
             <div class="col-span-4 glass-panel rounded-2xl p-5 flex flex-col h-full shadow-2xl">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-semibold flex items-center gap-4">
+                    <h2 class="text-lg font-semibold flex items-center gap-2">
                         <i class="fas fa-shopping-cart text-blue-500"></i> Current Order
                     </h2>
-                    <button onclick="clearCart()" class="text-xs text-slate-400 hover:text-rose-400 transition-all">Clear All</button>
+                    <button onclick="clearCart()" class="text-xs text-slate-400 hover:text-rose-400 transition-colors">Clear All</button>
+                </div>
+                
+                <div id="cart-items" class="flex-1 overflow-y-auto custom-scrollbar space-y-3 mb-4"></div>
+
+                <div class="border-t border-slate-700 pt-4 space-y-3">
+                    <div class="flex justify-between text-xl font-bold text-white">
+                        <span>Total</span>
+                        <span id="cart-total" class="text-blue-400">₱0.00</span>
+                    </div>
+
+                    <div class="space-y-2 mt-4">
+                        <label class="text-sm text-slate-400">Payment Method</label>
+                        <select id="payment-method" onchange="toggleCustomerField()" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
+                            <option value="cash">Cash</option>
+                            <option value="utang">Utang (Full Debt)</option>
+                            <option value="installment">Installment (Partial Pay)</option>
+                        </select>
+                    </div>
+
+                    <div id="customer-info" class="hidden space-y-2">
+                        <input type="text" id="customer-name" placeholder="Customer Name" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
+                        <input type="number" id="initial-payment" placeholder="Initial Cash Paid" class="hidden w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
+                    </div>
+
+                    <button onclick="checkout()" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-white transition-colors mt-2">
+                        COMPLETE TRANSACTION
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- INVENTORY SECTION -->
+        <section id="section-inventory" class="hidden h-full flex flex-col gap-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-2xl font-bold">Inventory Management</h2>
+                <button onclick="openModal('product-modal')" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
+                    <i class="fas fa-plus"></i> Add New Dish/Item
+                </button>
+            </div>
+            <div class="glass-panel rounded-2xl overflow-hidden flex flex-col flex-1">
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-800/50 border-b border-slate-700">
+                            <tr>
+                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Item Name</th>
+                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Category / Serving</th>
+                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Price</th>
+                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Stock</th>
+                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-table-body" class="divide-y divide-slate-800"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- DEBT TRACKER SECTION -->
+        <section id="section-debt" class="hidden h-full flex flex-col gap-6">
+            <div class="flex justify-between items-center">
+                <h2 class="text-2xl font-bold">Customer Debts</h2>
+            </div>
+            <div class="glass-panel rounded-2xl overflow-hidden flex flex-col flex-1">
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-800/50 border-b border-slate-700">
+                            <tr>
+                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Customer Name</th>
+                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Items Owed</th>
+                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Balance</th>
+                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Status</th>
+                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="debt-table-body" class="divide-y divide-slate-800"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SALES REPORT SECTION -->
+        <section id="section-sales" class="hidden h-full flex flex-col gap-6">
+            <div class="flex justify-between items-end">
+                <div>
+                    <h2 class="text-2xl font-bold">Sales History</h2>
+                    <p class="text-slate-400 text-sm" >Every transaction and payment is recorded here</p>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700">
+                    <p class="text-[10px] text-slate-400 uppercase font-bold">Total Cash Collected</p>
+                    <p id="total-revenue" class="text-2xl font-bold text-emerald-400">₱0.00</p>
+                </div>
+            </div>
+            <div class="glass-panel rounded-2xl overflow-hidden flex flex-col flex-1">
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-800/50 border-b border-slate-700">
+                            <tr>
+                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Date</th>
+                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Details & Items</th>
+                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Type</th>
+                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Collected</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sales-table-body" class="divide-y divide-slate-800"></tbody>
+                    </table>
                 </div>
             </div>
         </section>
     </main>
+
+    <!-- MODAL: PRODUCT -->
+    <div id="product-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+        <div class="glass-panel w-full max-w-md rounded-2xl p-6">
+            <h3 class="text-xl font-bold mb-6" id="modal-title">Item Details</h3>
+            <div class="space-y-4">
+                <input type="hidden" id="edit-id">
+                <input type="text" id="p-name" placeholder="Item Name" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" id="p-cat" placeholder="Category" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
+                    <input type="text" id="p-serving" placeholder="Serving" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="number" id="p-price" placeholder="Price" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
+                    <input type="number" id="p-stock" placeholder="Stock" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button onclick="closeModal('product-modal')" class="flex-1 bg-slate-700 py-2 rounded-lg">Cancel</button>
+                    <button onclick="saveProduct()" class="flex-1 bg-blue-600 py-2 rounded-lg font-bold">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: PAYMENT (DEBT) -->
+    <div id="payment-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+        <div class="glass-panel w-full max-w-md rounded-2xl p-6">
+            <h3 class="text-xl font-bold mb-2">Accept Payment</h3>
+            <div id="payment-items-list" class="mb-4 space-y-1"></div>
+            <p id="payment-modal-subtitle" class="text-slate-400 text-sm mb-6"></p>
+            <div class="space-y-4">
+                <input type="hidden" id="payment-debt-id">
+                <label class="block text-xs text-slate-500 uppercase font-bold">Amount Paid by Customer:</label>
+                <input type="number" id="payment-amt" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-xl font-bold text-emerald-400 outline-none">
+                <div class="flex gap-3 pt-4">
+                    <button onclick="closeModal('payment-modal')" class="flex-1 bg-slate-700 py-2 rounded-lg">Cancel</button>
+                    <button onclick="processDebtPayment()" class="flex-1 bg-emerald-600 py-2 rounded-lg font-bold">Confirm & Log Sale</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-6 right-6 px-6 py-3 rounded-xl shadow-2xl translate-y-20 transition-all duration-300 z-50 flex items-center gap-3">
+        <span id="toast-msg"></span>
+    </div>
+
+    <script src="../../src/frontend/js/app.js"></script>
 </body>
 </html>
