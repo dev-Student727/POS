@@ -72,7 +72,7 @@ body {
     .pos-sidebar.active {
         transform: translateY(0);
     }
-
+    
     /* Mobile Menu Logic */
     #mobile-nav-menu {
         display: none;
@@ -86,7 +86,6 @@ body {
         border-bottom: 1px solid rgba(255,255,255,0.1);
         z-index: 40;
     }
-    
     #mobile-nav-menu.active {
         display: flex;
     }
