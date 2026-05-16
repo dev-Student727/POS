@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
 body {
     font-family: 'Inter', sans-serif;
     background-color: #0f172a;
@@ -9,7 +8,7 @@ body {
 .glass-panel {
     background: rgba(30, 41, 59, 0.7);
     backdrop-filter: blur(12px);
-    border-radius: 1px solid rgba(60, 236, 248, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -27,18 +26,12 @@ body {
 
 .active-tab {
     background: #3b82f6;
-    color: #f1f5f9;
+    color: white;
 }
 
 .card-hover:hover {
     transform: translateY(-2px);
     transition: all 0.2s ease;
-}
-
-.paid-line-through {
-    text-decoration: line-through;
-    color: #94a3b8;
-    opacity: 0.7;
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -49,6 +42,7 @@ body {
     background: rgba(59, 130, 246, 0.1);
     border: 1px solid rgba(59, 130, 246, 0.2);
     color: #93c5fd;
+    padding: 2px 6px;
     border-radius: 4px;
     font-size: 10px;
     display: inline-block;
@@ -59,4 +53,41 @@ body {
     background: rgba(16, 185, 129, 0.1);
     border: 1px solid rgba(16, 185, 129, 0.2);
     color: #6ee7b7;
+}
+
+/* Responsive UI Logic */
+@media (max-width: 1024px) {
+    .pos-sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 80vh !important;
+        z-index: 50;
+        transform: translateY(100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border-radius: 24px 24px 0 0;
+    }
+
+    .pos-sidebar.active {
+        transform: translateY(0);
+    }
+
+    /* Mobile Menu Logic */
+    #mobile-nav-menu {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #1e293b;
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        z-index: 40;
+    }
+    
+    #mobile-nav-menu.active {
+        display: flex;
+    }
 }

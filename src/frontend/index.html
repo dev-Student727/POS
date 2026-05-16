@@ -12,54 +12,82 @@
 <body class="h-screen overflow-hidden flex flex-col">
 
     <!-- Header -->
-    <header class="glass-panel px-6 py-4 flex justify-between items-center z-10">
-        <div class="flex items-center gap-3">
+    <header class="glass-panel px-4 md:px-6 py-4 flex flex-row justify-between items-center z-50 gap-4 relative">
+        <div class="flex items-center gap-3 cursor-pointer active:scale-95 transition-transform" onclick="toggleMobileMenu()">
             <div class="bg-blue-600 p-2 rounded-lg">
                 <i class="fas fa-cash-register text-white text-xl"></i>
             </div>
-            <h1 class="text-xl font-bold tracking-tight">J&LB STORE</h1>
+            <div>
+                <h1 class="text-xl font-bold tracking-tight">NovaPOS</h1>
+                <p class="text-[10px] text-slate-400 lg:hidden">Tap to switch view <i class="fas fa-chevron-down ml-1"></i></p>
+            </div>
         </div>
-        <div class="flex gap-2 overflow-x-auto no-scrollbar">
+        
+        <!-- Desktop Navigation -->
+        <div class="hidden lg:flex gap-2">
             <button onclick="switchTab('pos')" id="tab-pos" class="tab-btn active-tab px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap">POS</button>
             <button onclick="switchTab('inventory')" id="tab-inventory" class="tab-btn px-4 py-2 rounded-lg font-medium hover:bg-slate-700 transition-all whitespace-nowrap">Inventory</button>
             <button onclick="switchTab('debt')" id="tab-debt" class="tab-btn px-4 py-2 rounded-lg font-medium hover:bg-slate-700 transition-all whitespace-nowrap">Debt Tracker</button>
             <button onclick="switchTab('sales')" id="tab-sales" class="tab-btn px-4 py-2 rounded-lg font-medium hover:bg-slate-700 transition-all whitespace-nowrap">Sales Report</button>
         </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-nav-menu" class="lg:hidden space-y-2">
+            <button onclick="switchTab('pos')" id="mob-tab-pos" class="w-full text-left px-4 py-4 rounded-xl hover:bg-slate-700 font-medium flex items-center gap-4">
+                <div class="w-8 flex justify-center"><i class="fas fa-shopping-cart text-blue-400"></i></div> Point of Sale
+            </button>
+            <button onclick="switchTab('inventory')" id="mob-tab-inventory" class="w-full text-left px-4 py-4 rounded-xl hover:bg-slate-700 font-medium flex items-center gap-4">
+                <div class="w-8 flex justify-center"><i class="fas fa-boxes text-emerald-400"></i></div> Inventory
+            </button>
+            <button onclick="switchTab('debt')" id="mob-tab-debt" class="w-full text-left px-4 py-4 rounded-xl hover:bg-slate-700 font-medium flex items-center gap-4">
+                <div class="w-8 flex justify-center"><i class="fas fa-hand-holding-dollar text-rose-400"></i></div> Debt Tracker
+            </button>
+            <button onclick="switchTab('sales')" id="mob-tab-sales" class="w-full text-left px-4 py-4 rounded-xl hover:bg-slate-700 font-medium flex items-center gap-4">
+                <div class="w-8 flex justify-center"><i class="fas fa-chart-line text-amber-400"></i></div> Sales Report
+            </button>
+        </div>
     </header>
 
-    <main class="flex-1 overflow-hidden p-6 relative">
+    <main class="flex-1 lg:overflow-hidden p-4 md:p-6 relative">
         
         <!-- POS SECTION -->
-        <section id="section-pos" class="h-full grid grid-cols-12 gap-6">
-            <div class="col-span-8 flex flex-col gap-4 h-full">
+        <section id="section-pos" class="h-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Product Area -->
+            <div class="lg:col-span-8 flex flex-col gap-4 h-full">
                 <div class="flex gap-4 items-center">
                     <div class="relative flex-1">
                         <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                         <input type="text" id="search-pos" oninput="renderPosProducts()" placeholder="Search products..." class="w-full bg-slate-800 border border-slate-700 rounded-xl py-2 pl-10 pr-4 focus:ring-2 focus:ring-blue-500 outline-none">
                     </div>
                 </div>
-                <div id="pos-product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto custom-scrollbar pr-2 pb-4"></div>
+                <div id="pos-product-grid" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 overflow-y-auto custom-scrollbar pr-2 pb-24 lg:pb-4"></div>
             </div>
 
-            <div class="col-span-4 glass-panel rounded-2xl p-5 flex flex-col h-full shadow-2xl">
+            <!-- Cart Area (Sidebar on Desktop, Bottom Sheet on Mobile) -->
+            <div id="cart-sidebar" class="lg:col-span-4 pos-sidebar glass-panel p-5 flex flex-col h-full shadow-2xl">
+                <div class="lg:hidden w-12 h-1 bg-slate-600 rounded-full mx-auto mb-4" onclick="toggleCartMobile()"></div>
+                
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-lg font-semibold flex items-center gap-2">
                         <i class="fas fa-shopping-cart text-blue-500"></i> Current Order
                     </h2>
-                    <button onclick="clearCart()" class="text-xs text-slate-400 hover:text-rose-400 transition-colors">Clear All</button>
+                    <div class="flex gap-4 items-center">
+                        <button onclick="clearCart()" class="text-xs text-slate-400 hover:text-rose-400 transition-colors">Clear</button>
+                        <button onclick="toggleCartMobile()" class="lg:hidden text-slate-400"><i class="fas fa-times"></i></button>
+                    </div>
                 </div>
                 
-                <div id="cart-items" class="flex-1 overflow-y-auto custom-scrollbar space-y-3 mb-4"></div>
+                <div id="cart-items" class="flex-1 overflow-y-auto custom-scrollbar space-y-3 mb-4 min-h-0"></div>
 
-                <div class="border-t border-slate-700 pt-4 space-y-3">
+                <div class="border-t border-slate-700 pt-4 space-y-3 bg-transparent">
                     <div class="flex justify-between text-xl font-bold text-white">
                         <span>Total</span>
                         <span id="cart-total" class="text-blue-400">₱0.00</span>
                     </div>
 
-                    <div class="space-y-2 mt-4">
-                        <label class="text-sm text-slate-400">Payment Method</label>
-                        <select id="payment-method" onchange="toggleCustomerField()" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
+                    <div class="space-y-2 mt-2">
+                        <label class="text-[10px] text-slate-400 uppercase font-bold">Payment Method</label>
+                        <select id="payment-method" onchange="toggleCustomerField()" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none text-sm">
                             <option value="cash">Cash</option>
                             <option value="utang">Utang (Full Debt)</option>
                             <option value="installment">Installment (Partial Pay)</option>
@@ -67,35 +95,43 @@
                     </div>
 
                     <div id="customer-info" class="hidden space-y-2">
-                        <input type="text" id="customer-name" placeholder="Customer Name" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
-                        <input type="number" id="initial-payment" placeholder="Initial Cash Paid" class="hidden w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
+                        <input type="text" id="customer-name" placeholder="Customer Name" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none text-sm">
+                        <input type="number" id="initial-payment" placeholder="Initial Cash Paid" class="hidden w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none text-sm">
                     </div>
 
-                    <button onclick="checkout()" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-white transition-colors mt-2">
+                    <button onclick="checkout()" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-white transition-colors">
                         COMPLETE TRANSACTION
                     </button>
                 </div>
             </div>
+
+            <!-- Mobile Cart Toggle Button -->
+            <button id="mobile-cart-btn" onclick="toggleCartMobile()" class="lg:hidden fixed bottom-6 right-6 bg-blue-600 text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center z-30 transition-transform active:scale-90">
+                <div class="relative">
+                    <i class="fas fa-shopping-basket text-xl"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-rose-500 text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+                </div>
+            </button>
         </section>
 
         <!-- INVENTORY SECTION -->
         <section id="section-inventory" class="hidden h-full flex flex-col gap-6">
-            <div class="flex justify-between items-center">
-                <h2 class="text-2xl font-bold">Inventory Management</h2>
-                <button onclick="openModal('product-modal')" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
-                    <i class="fas fa-plus"></i> Add New Dish/Item
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h2 class="text-2xl font-bold">Inventory</h2>
+                <button onclick="openModal('product-modal')" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors w-full sm:w-auto justify-center">
+                    <i class="fas fa-plus"></i> Add New Dish
                 </button>
             </div>
             <div class="glass-panel rounded-2xl overflow-hidden flex flex-col flex-1">
                 <div class="overflow-x-auto custom-scrollbar">
-                    <table class="w-full text-left">
+                    <table class="w-full text-left min-w-[600px]">
                         <thead class="bg-slate-800/50 border-b border-slate-700">
                             <tr>
-                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Item Name</th>
-                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Category / Serving</th>
-                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Price</th>
-                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Stock</th>
-                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400 text-right">Actions</th>
+                                <th class="px-6 py-4 text-xs font-semibold uppercase text-slate-400">Item Name</th>
+                                <th class="px-6 py-4 text-xs font-semibold uppercase text-slate-400">Category / Serving</th>
+                                <th class="px-6 py-4 text-xs font-semibold uppercase text-slate-400">Price</th>
+                                <th class="px-6 py-4 text-xs font-semibold uppercase text-slate-400">Stock</th>
+                                <th class="px-6 py-4 text-xs font-semibold uppercase text-slate-400 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="inventory-table-body" class="divide-y divide-slate-800"></tbody>
@@ -106,19 +142,16 @@
 
         <!-- DEBT TRACKER SECTION -->
         <section id="section-debt" class="hidden h-full flex flex-col gap-6">
-            <div class="flex justify-between items-center">
-                <h2 class="text-2xl font-bold">Customer Debts</h2>
-            </div>
+            <h2 class="text-2xl font-bold">Customer Debts</h2>
             <div class="glass-panel rounded-2xl overflow-hidden flex flex-col flex-1">
                 <div class="overflow-x-auto custom-scrollbar">
-                    <table class="w-full text-left">
+                    <table class="w-full text-left min-w-[600px]">
                         <thead class="bg-slate-800/50 border-b border-slate-700">
                             <tr>
-                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Customer Name</th>
-                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Items Owed</th>
-                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Balance</th>
-                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Status</th>
-                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400 text-right">Actions</th>
+                                <th class="px-6 py-4 text-xs font-semibold uppercase text-slate-400">Customer Name</th>
+                                <th class="px-6 py-4 text-xs font-semibold uppercase text-slate-400">Items Owed</th>
+                                <th class="px-6 py-4 text-xs font-semibold uppercase text-slate-400">Balance</th>
+                                <th class="px-6 py-4 text-xs font-semibold uppercase text-slate-400 text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="debt-table-body" class="divide-y divide-slate-800"></tbody>
@@ -129,25 +162,24 @@
 
         <!-- SALES REPORT SECTION -->
         <section id="section-sales" class="hidden h-full flex flex-col gap-6">
-            <div class="flex justify-between items-end">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                 <div>
                     <h2 class="text-2xl font-bold">Sales History</h2>
-                    <p class="text-slate-400 text-sm" >Every transaction and payment is recorded here</p>
+                    <p class="text-slate-400 text-sm">Full transaction logs</p>
                 </div>
-                <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700">
+                <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 w-full md:w-auto">
                     <p class="text-[10px] text-slate-400 uppercase font-bold">Total Cash Collected</p>
                     <p id="total-revenue" class="text-2xl font-bold text-emerald-400">₱0.00</p>
                 </div>
             </div>
             <div class="glass-panel rounded-2xl overflow-hidden flex flex-col flex-1">
                 <div class="overflow-x-auto custom-scrollbar">
-                    <table class="w-full text-left">
+                    <table class="w-full text-left min-w-[600px]">
                         <thead class="bg-slate-800/50 border-b border-slate-700">
                             <tr>
-                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Date</th>
-                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Details & Items</th>
-                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Type</th>
-                                <th class="px-6 py-4 text-sm font-semibold uppercase text-slate-400">Collected</th>
+                                <th class="px-6 py-4 text-xs font-semibold uppercase text-slate-400">Date</th>
+                                <th class="px-6 py-4 text-xs font-semibold uppercase text-slate-400">Details</th>
+                                <th class="px-6 py-4 text-xs font-semibold uppercase text-slate-400">Collected</th>
                             </tr>
                         </thead>
                         <tbody id="sales-table-body" class="divide-y divide-slate-800"></tbody>
@@ -158,47 +190,64 @@
     </main>
 
     <!-- MODAL: PRODUCT -->
-    <div id="product-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+    <div id="product-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
         <div class="glass-panel w-full max-w-md rounded-2xl p-6">
             <h3 class="text-xl font-bold mb-6" id="modal-title">Item Details</h3>
             <div class="space-y-4">
                 <input type="hidden" id="edit-id">
                 <input type="text" id="p-name" placeholder="Item Name" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
-                <div class="grid grid-cols-2 gap-4">
-                    <input type="text" id="p-cat" placeholder="Category" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
-                    <input type="text" id="p-serving" placeholder="Serving" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
+                
+                <div class="space-y-1">
+                    <label class="text-[10px] text-slate-400 uppercase font-bold px-1">Category</label>
+                    <select id="p-cat" onchange="updateServingChoices()" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
+                        <option value="Dish">Dish (Ulam)</option>
+                        <option value="Beverage">Beverage (Drinks)</option>
+                        <option value="Snack">Snack</option>
+                        <option value="Others">Others</option>
+                    </select>
                 </div>
+
                 <div class="grid grid-cols-2 gap-4">
-                    <input type="number" id="p-price" placeholder="Price" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
-                    <input type="number" id="p-stock" placeholder="Stock" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
+                    <div class="space-y-1">
+                        <label class="text-[10px] text-slate-400 uppercase font-bold px-1">Serving Type</label>
+                        <select id="p-serving" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none"></select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] text-slate-400 uppercase font-bold px-1">Price (₱)</label>
+                        <input type="number" id="p-price" placeholder="0.00" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
+                    </div>
                 </div>
+
+                <div class="space-y-1">
+                    <label id="stock-label" class="text-[10px] text-slate-400 uppercase font-bold px-1">Initial Stock</label>
+                    <input type="number" id="p-stock" placeholder="Enter amount" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 outline-none">
+                </div>
+
                 <div class="flex gap-3 pt-4">
                     <button onclick="closeModal('product-modal')" class="flex-1 bg-slate-700 py-2 rounded-lg">Cancel</button>
-                    <button onclick="saveProduct()" class="flex-1 bg-blue-600 py-2 rounded-lg font-bold">Save</button>
+                    <button onclick="saveProduct()" class="flex-1 bg-blue-600 py-2 rounded-lg font-bold">Save Item</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: PAYMENT (DEBT) -->
-    <div id="payment-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+    <!-- MODAL: PAYMENT -->
+    <div id="payment-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
         <div class="glass-panel w-full max-w-md rounded-2xl p-6">
-            <h3 class="text-xl font-bold mb-2">Accept Payment</h3>
-            <div id="payment-items-list" class="mb-4 space-y-1"></div>
-            <p id="payment-modal-subtitle" class="text-slate-400 text-sm mb-6"></p>
+            <h3 class="text-xl font-bold mb-4">Accept Payment</h3>
+            <div id="payment-modal-subtitle" class="text-slate-400 text-sm mb-6"></div>
             <div class="space-y-4">
                 <input type="hidden" id="payment-debt-id">
-                <label class="block text-xs text-slate-500 uppercase font-bold">Amount Paid by Customer:</label>
-                <input type="number" id="payment-amt" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-xl font-bold text-emerald-400 outline-none">
+                <input type="number" id="payment-amt" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-4 text-2xl font-bold text-emerald-400 outline-none text-center">
                 <div class="flex gap-3 pt-4">
                     <button onclick="closeModal('payment-modal')" class="flex-1 bg-slate-700 py-2 rounded-lg">Cancel</button>
-                    <button onclick="processDebtPayment()" class="flex-1 bg-emerald-600 py-2 rounded-lg font-bold">Confirm & Log Sale</button>
+                    <button onclick="processDebtPayment()" class="flex-1 bg-emerald-600 py-2 rounded-lg font-bold">Confirm Payment</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="toast" class="fixed bottom-6 right-6 px-6 py-3 rounded-xl shadow-2xl translate-y-20 transition-all duration-300 z-50 flex items-center gap-3">
+    <div id="toast" class="fixed bottom-6 right-6 px-6 py-3 rounded-xl shadow-2xl translate-y-20 transition-all duration-300 z- flex items-center gap-3">
         <span id="toast-msg"></span>
     </div>
 
